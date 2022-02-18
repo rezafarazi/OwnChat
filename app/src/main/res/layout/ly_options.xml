@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white_color">
+
+
+
+
+        <RadioGroup
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_margin="10dp"
+            android:id="@+id/ly_options_radio_group">
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/server"
+                android:textAlignment="center"
+                android:textColor="@color/text_color"
+                android:id="@+id/server_radio"/>
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/client"
+                android:textAlignment="center"
+                android:textColor="@color/text_color"
+                android:id="@+id/client_radio"/>
+
+        </RadioGroup>
+
+
+
+
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/ly_options_radio_group"
+            android:id="@+id/ly_options_spiner"/>
+
+
+
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/butten_bg"
+            android:layout_margin="10dp"
+            android:textColor="@color/white_color"
+            android:text="@string/done"
+            android:layout_below="@id/ly_options_spiner"
+            android:onClick="GetOnClickDialogDone"
+            android:visibility="gone"/>
+
+
+
+
+</RelativeLayout>

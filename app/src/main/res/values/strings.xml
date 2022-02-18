@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">OwnChat</string>
+    <string name="version">V1</string>
+    <string name="chats">چت</string>
+    <string name="chats_with_near_user">چت با نزدیک ترین کاربر</string>
+
+    <string name="server">میزبان</string>
+    <string name="client">مهمان</string>
+    <string name="done">تایید</string>
+
+</resources>
