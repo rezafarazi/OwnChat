@@ -3,6 +3,7 @@ package com.sorapp.ownchat;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.DialogInterface;
@@ -20,7 +21,13 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.zip.Inflater;
 
 public class ac_main extends AppCompatActivity
@@ -30,6 +37,7 @@ public class ac_main extends AppCompatActivity
     public static ArrayList<ArrayList<String>> Chats_lst=new ArrayList<>();
 
     cla_socket cls_main;
+    String Bluetoothname="";
 
     Chat_Adaptor chat_adaptor;
 
@@ -46,6 +54,7 @@ public class ac_main extends AppCompatActivity
 
         try
         {
+            Bluetoothname=getLocalBluetoothName();
             GetDisplayStatus();
             GetComponents();
         }
@@ -118,6 +127,16 @@ public class ac_main extends AppCompatActivity
         chat_adaptor =new Chat_Adaptor();
 
         chat_listview.setAdapter(chat_adaptor);
+
+        Timer t=new Timer();
+        t.schedule(new TimerTask()
+        {
+            @Override
+            public void run()
+            {
+                chat_adaptor.notifyDataSetChanged();
+            }
+        },1000);
     }
     //Get Components End
 
@@ -130,17 +149,42 @@ public class ac_main extends AppCompatActivity
     {
         EditText chat=(EditText) findViewById(R.id.ac_main_edit_text_chat_message);
 
+        Date currentTime = Calendar.getInstance().getTime();
+
         ArrayList<String> chatMessage=new ArrayList<>();
-        chatMessage.add("Writer");
+        chatMessage.add("0");
         chatMessage.add(chat.getText().toString());
+        chatMessage.add(currentTime.toString());
+        chatMessage.add(Bluetoothname);
         Chats_lst.add(chatMessage);
 
+//        Toast.makeText(getApplicationContext(), Chats_lst.size()+"", Toast.LENGTH_SHORT).show();
+
         chat.setText("");
-        chat_adaptor.notifyDataSetChanged();
+
     }
     //On Click Send Chat Button End
 
 
+
+
+    //Get Phone Bluetooth name Start
+    public String getLocalBluetoothName()
+    {
+        BluetoothAdapter mBluetoothAdapter=BluetoothAdapter.getDefaultAdapter();
+        if(mBluetoothAdapter == null)
+        {
+            mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        }
+        String name = mBluetoothAdapter.getName();
+        if(name == null)
+        {
+            System.out.println("Name is null!");
+            name = mBluetoothAdapter.getAddress();
+        }
+        return name;
+    }
+    //Get Phone Bluetooth name End
 
 
 
@@ -194,7 +238,9 @@ public class ac_main extends AppCompatActivity
             ArrayList<String> chat=Chats_lst.get(position);
             View view;
 
-            if(chat.get(0).toUpperCase().equals("WRITER"))
+            Toast.makeText(getApplicationContext(), Bluetoothname.toUpperCase(), Toast.LENGTH_SHORT).show();
+
+            if(chat.get(3).toUpperCase().equals(Bluetoothname.toUpperCase()))
             {
                 view = getLayoutInflater().inflate(R.layout.ly_chat_my_user, null);
                 TextView text = (TextView) view.findViewById(R.id.chat_text);

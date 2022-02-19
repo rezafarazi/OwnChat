@@ -13,6 +13,8 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.UUID;
 
 public class cla_socket
@@ -77,33 +79,60 @@ public class cla_socket
                         DataInputStream data_input=new DataInputStream(blu_socket.getInputStream());
                         DataOutputStream data_output=new DataOutputStream(blu_socket.getOutputStream());
 
-                        while(true)
+                        Timer t1=new Timer();
+                        t1.schedule(new TimerTask()
                         {
-                            String input=data_input.readUTF();
-                            JSONArray jarray=new JSONArray(input);
-
-                            for(int i=0;i<Server_Connection_Sockets.size();i++)
+                            @Override
+                            public void run()
                             {
-//                                DataInputStream user_input_stream=new DataInputStream(Server_Connection_Sockets.get(i).getInputStream());
-                                DataOutputStream user_out_stream=new DataOutputStream(Server_Connection_Sockets.get(i).getOutputStream());
-                                user_out_stream.writeUTF(input);
-                            }
+                                for (int i = 0; i < Server_Connection_Sockets.size(); i++)
+                                {
+                                    try
+                                    {
+                                        DataOutputStream user_out_stream = new DataOutputStream(Server_Connection_Sockets.get(i).getOutputStream());
+                                        user_out_stream.writeUTF(Get_Create_Json_From_ArrayList());
+                                    }
+                                    catch (Exception E)
+                                    {
 
-                            ac_main.Chats_lst.clear();
-                            for(int i=0;i<jarray.length();i++)
+                                    }
+                                }
+                            }
+                        },1000);
+
+                        Timer t2=new Timer();
+                        t2.schedule(new TimerTask()
+                        {
+                            @Override
+                            public void run()
                             {
-                                JSONObject jobjct=new JSONObject(jarray.get(i).toString());
-                                ArrayList<String> chat_data=new ArrayList<>();
+                                try
+                                {
+                                    String input = data_input.readUTF();
+                                    JSONArray jarray = new JSONArray(input);
 
-                                chat_data.add(jobjct.get("id").toString());
-                                chat_data.add(jobjct.get("content").toString());
-                                chat_data.add(jobjct.get("data").toString());
-                                chat_data.add(jobjct.get("owner").toString());
+//                                    ac_main.Chats_lst.clear();
+                                    for (int i = 0; i < jarray.length(); i++)
+                                    {
+                                        JSONObject jobjct = new JSONObject(jarray.get(i).toString());
+                                        ArrayList<String> chat_data = new ArrayList<>();
 
-                                ac_main.Chats_lst.add(chat_data);
+                                        chat_data.add(jobjct.get("id").toString());
+                                        chat_data.add(jobjct.get("content").toString());
+                                        chat_data.add(jobjct.get("date").toString());
+                                        chat_data.add(jobjct.get("owner").toString());
+
+                                        ac_main.Chats_lst.add(chat_data);
+                                    }
+
+                                }
+                                catch (Exception E)
+                                {
+
+                                }
                             }
+                        },1000);
 
-                        }
                     }
                     catch (Exception E)
                     {
@@ -114,6 +143,31 @@ public class cla_socket
         }
     }
     //Get Initialize Server End
+
+
+
+
+    //Get Create Json From ArrayList Function Start
+    public String Get_Create_Json_From_ArrayList() throws Exception
+    {
+        JSONArray jarray=new JSONArray();
+
+        for(int i=0;i<ac_main.Chats_lst.size();i++)
+        {
+            ArrayList<String> data=ac_main.Chats_lst.get(i);
+            JSONObject jObject=new JSONObject();
+            jObject.put("id",data.get(0));
+            jObject.put("content",data.get(1));
+            jObject.put("date",data.get(2));
+            jObject.put("owner",data.get(3));
+            jarray.put(jObject);
+        }
+
+        return jarray.toString();
+    }
+    //Get Create Json From ArrayList Function End
+
+
 
 
     //Get Initialize Client Start
@@ -144,25 +198,55 @@ public class cla_socket
                     DataInputStream data_input = new DataInputStream(blu_socket.getInputStream());
                     DataOutputStream data_output = new DataOutputStream(blu_socket.getOutputStream());
 
-                    while (true)
+
+                    Timer t1=new Timer();
+                    t1.schedule(new TimerTask()
                     {
-                        String input=data_input.readUTF();
-                        JSONArray jarray=new JSONArray(input);
-
-                        ac_main.Chats_lst.clear();
-                        for(int i=0;i<jarray.length();i++)
+                        @Override
+                        public void run()
                         {
-                            JSONObject jobjct=new JSONObject(jarray.get(i).toString());
-                            ArrayList<String> chat_data=new ArrayList<>();
+                            try
+                            {
+                                data_output.writeUTF(Get_Create_Json_From_ArrayList());
+                            }
+                            catch (Exception E)
+                            {
 
-                            chat_data.add(jobjct.get("id").toString());
-                            chat_data.add(jobjct.get("content").toString());
-                            chat_data.add(jobjct.get("data").toString());
-                            chat_data.add(jobjct.get("owner").toString());
-
-                            ac_main.Chats_lst.add(chat_data);
+                            }
                         }
-                    }
+                    },1000);
+
+                    Timer t2=new Timer();
+                    t2.schedule(new TimerTask()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            try
+                            {
+                                String input = data_input.readUTF();
+                                JSONArray jarray = new JSONArray(input);
+
+//                                ac_main.Chats_lst.clear();
+                                for (int i = 0; i < jarray.length(); i++)
+                                {
+                                    JSONObject jobjct = new JSONObject(jarray.get(i).toString());
+                                    ArrayList<String> chat_data = new ArrayList<>();
+
+                                    chat_data.add(jobjct.get("id").toString());
+                                    chat_data.add(jobjct.get("content").toString());
+                                    chat_data.add(jobjct.get("data").toString());
+                                    chat_data.add(jobjct.get("owner").toString());
+
+                                    ac_main.Chats_lst.add(chat_data);
+                                }
+                            }
+                            catch (Exception E)
+                            {
+
+                            }
+                        }
+                    },1000);
 
                 }
                 catch (Exception E)
