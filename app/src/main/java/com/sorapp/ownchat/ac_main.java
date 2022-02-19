@@ -144,6 +144,22 @@ public class ac_main extends AppCompatActivity
 
 
 
+
+    //On Back Press Event STart
+    @Override
+    public void onBackPressed()
+    {
+        Intent intent=new Intent();
+        intent.addCategory(Intent.CATEGORY_HOME);
+        intent.setAction(Intent.ACTION_MAIN);
+        startActivity(intent);
+    }
+    //On Back Press Event End
+
+
+
+
+
     //Chat List Adaptor Start
     class Chat_Adaptor extends BaseAdapter
     {
